@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Course;
+use App\Models\Role;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,7 +16,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        Role::query()->insert([
+            ['name' => 'admin', 'description' => 'Administrator', 'slug' => 'admin'],
+            ['name' => 'teacher', 'description' => 'Teacher', 'slug' => 'teacher'],
+            ['name' => 'student', 'description' => 'Student', 'slug' => 'student'],
+        ]);
+
+        \App\Models\User::factory(40)->create();
+
+        User::query()->first()->role = Role::ADMIN;
+
+        Course::factory(4)->create();
+
+        Student::all()->each(function ($student) {
+            $student->courses()->attach(
+                Course::all()->random(rand(1, 3))->pluck('id')->toArray()
+            );
+        });
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
