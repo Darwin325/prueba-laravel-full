@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Courses\CourseController;
+use App\Http\Controllers\Students\StudentsController;
 use App\Http\Controllers\Students\StudentsCourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,5 @@ Route::resource('students.courses', StudentsCourseController::class)->only(['ind
 
 Route::apiResources([
     'courses' => CourseController::class,
+    'students' => StudentsController::class
 ]);
