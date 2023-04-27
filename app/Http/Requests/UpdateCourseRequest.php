@@ -11,7 +11,7 @@ class UpdateCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'max:255',
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'description' => 'string',
         ];
     }
 }
