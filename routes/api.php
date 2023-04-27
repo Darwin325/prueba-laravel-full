@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Courses\CourseController;
+use App\Http\Controllers\Students\StudentsCourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('top/courses/count', [StudentsCourseController::class, 'countTopCourses']);
+
+Route::resource('students.courses', StudentsCourseController::class)->only(['index', 'store']);
 
 Route::apiResources([
     'courses' => CourseController::class,

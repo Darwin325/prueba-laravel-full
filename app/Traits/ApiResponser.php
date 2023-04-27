@@ -5,7 +5,7 @@ trait ApiResponser
 {
     protected function successResponse($data, $code = 200)
     {
-        return response()->json($data, $code);
+        return response()->json( ['data' => $data], $code);
     }
 
     protected function errorResponse($message, $code)
