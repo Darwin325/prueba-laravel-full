@@ -24,7 +24,11 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory(40)->create();
 
-        User::query()->first()->role = Role::ADMIN;
+        User::query()->first()->update([
+            'name' => 'Admin',
+            'role_id' => Role::ADMIN,
+            'email' => 'admin@mail.com'
+        ]);
 
         Course::factory(4)->create();
 
