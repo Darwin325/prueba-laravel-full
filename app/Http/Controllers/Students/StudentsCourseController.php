@@ -17,10 +17,11 @@ class StudentsCourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Student $student)
+    public function index($student)
     {
         try {
-            return $this->successResponse($student->courses, 200);
+            $courses = Student::with('courses')->findOrFail($student);
+            return $this->successResponse($courses, 200);
         } catch (\Exception $e) {
             return $this->errorResponse('Courses not retrieved', 404);
         }
@@ -32,7 +33,7 @@ class StudentsCourseController extends Controller
     public function store(Request $request, Student $student)
     {
         $request->validate([
-            'course_id' => 'required|numeric|min:1|exists:courses,id|unique:course_student,course_id',
+            'course_id' => 'required|numeric|min:1|exists:courses,id',
         ]);
 
         try {
@@ -56,13 +57,11 @@ class StudentsCourseController extends Controller
     {
         $old = Carbon::now()->subMonths(6);
         $limit = 3;
-        Log::info('old: ' . $old . ' limit: ' . $limit);
-        if (\request()->has('old')) {
-            $old = \request('old');
+        if (\request()->has('old_date')) {
+            $old = \request('old_date');
         }
         if (\request()->has('limit')) {
             $limit = \request('limit');
-            Log::info('limit: ' . $limit);
         }
 
         try {
