@@ -4,23 +4,24 @@ namespace App\Http\Controllers\Students;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Services\Contracts\IStudentService;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class StudentsController extends Controller
 {
     use ApiResponser;
+
+    public function __construct(private readonly IStudentService $studentService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $perPage = 20;
-        if (\request()->has('per_page')){
-            $perPage = \request()->per_page;
-        }
-        $students = Student::query()->paginate($perPage);
+        $students = $this->studentService->getAll();
         return $this->successResponse($students, 200);
     }
 
@@ -35,8 +36,9 @@ class StudentsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Student $student)
+    public function show($student)
     {
+        $student = $this->studentService->getById($student);
         return $this->successResponse($student, 200);
     }
 
@@ -51,13 +53,9 @@ class StudentsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Student $student)
+    public function destroy($student)
     {
-        $studentDeleted = DB::transaction(function () use ($student) {
-            $student->courses()->detach();
-            $student->delete();
-            return $student;
-        });
+        $studentDeleted = $this->studentService->delete($student);
         return $this->successResponse($studentDeleted, 200);
     }
 }
