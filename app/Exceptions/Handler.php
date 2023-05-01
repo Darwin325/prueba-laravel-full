@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponser;
-use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,6 +17,7 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     use ApiResponser;
+
     /**
      * The list of the inputs that are never flashed to the session on validation exceptions.
      *
@@ -74,9 +74,10 @@ class Handler extends ExceptionHandler
 
             if ($exception instanceof QueryException) {
                 $code = $exception->errorInfo[1];
-
                 if ($code == 1451) {
                     return $this->errorResponse('No se puede eliminar de forma permanente el recurso porque está relacionado con algún otro.', 409);
+                } else {
+                    return $this->errorResponse($exception->getMessage(), 409);
                 }
             }
 
@@ -91,8 +92,8 @@ class Handler extends ExceptionHandler
     /**
      * Create a response object from the given validation exception.
      *
-     * @param  \Illuminate\Validation\ValidationException  $e
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Validation\ValidationException $e
+     * @param \Illuminate\Http\Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function convertValidationExceptionToResponse(ValidationException $e, $request)
