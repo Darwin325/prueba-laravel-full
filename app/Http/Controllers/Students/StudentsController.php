@@ -20,12 +20,8 @@ class StudentsController extends Controller
         if (\request()->has('per_page')){
             $perPage = \request()->per_page;
         }
-        try {
-            $students = Student::query()->paginate($perPage);
-            return $this->successResponse($students, 200);
-        } catch (\Exception $e) {
-            return $this->errorResponse('Students not retrieved', 404);
-        }
+        $students = Student::query()->paginate($perPage);
+        return $this->successResponse($students, 200);
     }
 
     /**
@@ -41,11 +37,7 @@ class StudentsController extends Controller
      */
     public function show(Student $student)
     {
-        try {
-            return $this->successResponse($student, 200);
-        } catch (\Exception $e) {
-            return $this->errorResponse('Student not retrieved', 404);
-        }
+        return $this->successResponse($student, 200);
     }
 
     /**
@@ -61,15 +53,11 @@ class StudentsController extends Controller
      */
     public function destroy(Student $student)
     {
-        try {
-            $studentDeleted = DB::transaction(function () use ($student) {
-                $student->courses()->detach();
-                $student->delete();
-                return $student;
-            });
-            return $this->successResponse($studentDeleted, 200);
-        } catch (\Exception $e) {
-            return $this->errorResponse('Student not deleted', 404);
-        }
+        $studentDeleted = DB::transaction(function () use ($student) {
+            $student->courses()->detach();
+            $student->delete();
+            return $student;
+        });
+        return $this->successResponse($studentDeleted, 200);
     }
 }

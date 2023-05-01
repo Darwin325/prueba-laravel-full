@@ -19,12 +19,8 @@ class StudentsCourseController extends Controller
      */
     public function index($student)
     {
-        try {
-            $courses = Student::with('courses')->findOrFail($student);
-            return $this->successResponse($courses, 200);
-        } catch (\Exception $e) {
-            return $this->errorResponse('Courses not retrieved', 404);
-        }
+        $courses = Student::with('courses')->findOrFail($student);
+        return $this->successResponse($courses, 200);
     }
 
     /**
@@ -35,16 +31,11 @@ class StudentsCourseController extends Controller
         $request->validate([
             'course_id' => 'required|numeric|min:1|exists:courses,id',
         ]);
-
-        try {
-            $request->merge([
-                'student_id' => $student->id,
-            ]);
-            $student->courses()->attach($request->course_id);
-            return $this->successResponse($student->courses, 201);
-        } catch (\Exception $e) {
-            return $this->errorResponse('Course not added', 404);
-        }
+        $request->merge([
+            'student_id' => $student->id,
+        ]);
+        $student->courses()->attach($request->course_id);
+        return $this->successResponse($student->courses, 201);
     }
 
     /**
@@ -63,20 +54,15 @@ class StudentsCourseController extends Controller
         if (\request()->has('limit')) {
             $limit = \request('limit');
         }
-
-        try {
-            $courses = Course::query()
-                ->select('courses.*')
-                ->selectRaw(
-                    "(select count(*) from course_student where courses.id = course_student.course_id and created_at > '$old')
+        $courses = Course::query()
+            ->select('courses.*')
+            ->selectRaw(
+                "(select count(*) from course_student where courses.id = course_student.course_id and created_at > '$old')
                     as students_count"
-                )
-                ->orderBy('students_count', 'desc')
-                ->limit($limit)
-                ->get();
-            return $this->successResponse($courses, 200);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 404);
-        }
+            )
+            ->orderBy('students_count', 'desc')
+            ->limit($limit)
+            ->get();
+        return $this->successResponse($courses, 200);
     }
 }

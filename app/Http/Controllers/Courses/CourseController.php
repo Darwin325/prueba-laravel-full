@@ -14,17 +14,14 @@ use Illuminate\Validation\ValidationException;
 class CourseController extends Controller
 {
     use ApiResponser;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        try {
-            $courses = Course::all();
-            return $this->successResponse($courses);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 404);
-        }
+        $courses = Course::all();
+        return $this->successResponse($courses);
     }
 
     /**
@@ -32,16 +29,11 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        try {
-            $request->merge([
-                'time' => json_encode($request->time)
-            ]);
-            $course = Course::query()->create($request->all());
-            return $this->successResponse($course, 201);
-        } catch (\Exception $e) {
-            Log::info($e->getMessage());
-            return $this->errorResponse($e->getMessage(), 404);
-        }
+        $request->merge([
+            'time' => json_encode($request->time)
+        ]);
+        $course = Course::query()->create($request->all());
+        return $this->successResponse($course, 201);
     }
 
     /**
@@ -49,11 +41,7 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        try {
-            return $this->successResponse($course);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 404);
-        }
+        return $this->successResponse($course);
     }
 
     /**
@@ -61,30 +49,26 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course)
     {
-        try {
-            if ($request->has('time')) {
-                $course->time = json_encode($request->time);
-            }
-            if ($request->has('start_date')) {
-                $course->start_date = $request->start_date;
-            }
-            if ($request->has('end_date')) {
-                $course->end_date = $request->end_date;
-            }
-            if ($request->has('description')) {
-                $course->description = $request->description;
-            }
-            if ($request->has('name')) {
-                $course->name = $request->name;
-            }
-            if ($course->isClean()) {
-                return $this->errorResponse('Coloque por lo menos un valor diferente', 422);
-            }
-            $course->save();
-            return $this->successResponse($course);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 404);
+        if ($request->has('time')) {
+            $course->time = json_encode($request->time);
         }
+        if ($request->has('start_date')) {
+            $course->start_date = $request->start_date;
+        }
+        if ($request->has('end_date')) {
+            $course->end_date = $request->end_date;
+        }
+        if ($request->has('description')) {
+            $course->description = $request->description;
+        }
+        if ($request->has('name')) {
+            $course->name = $request->name;
+        }
+        if ($course->isClean()) {
+            return $this->errorResponse('Coloque por lo menos un valor diferente', 422);
+        }
+        $course->save();
+        return $this->successResponse($course);
     }
 
     /**
@@ -92,15 +76,11 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        try {
-            $course = DB::transaction(function () use ($course) {
-                $course->students()->detach();
-                $course->delete();
-                return $course;
-            });
-            return $this->successResponse($course);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 404);
-        }
+        $course = DB::transaction(function () use ($course) {
+            $course->students()->detach();
+            $course->delete();
+            return $course;
+        });
+        return $this->successResponse($course);
     }
 }
