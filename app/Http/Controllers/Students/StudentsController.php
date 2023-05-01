@@ -14,6 +14,8 @@ class StudentsController extends Controller
 
     public function __construct(private readonly IStudentService $studentService)
     {
+        //Agregar la plicy de Student
+        $this->middleware('can:viewAny,App\Models\Student');
     }
 
     /**

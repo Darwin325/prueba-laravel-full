@@ -40,11 +40,11 @@ class UserService implements IUserService
         ]);
 
         if (!auth()->attempt($request->only('email', 'password'))) {
-            return $this->errorresponse('credenciales incorrectas', 401);
+            return $this->errorResponse('Credenciales incorrectas', 401);
         }
 
-        $user = user::query()->where('email', $request->email)->firstorfail();
-        $token = auth()->user()->createtoken('authtoken')->plaintexttoken;
+        $user = User::query()->where('email', $request->email)->firstOrFail();
+        $token = auth()->user()->createToken('authToken')->plainTextToken;
         return [
             'user' => $user,
             'token' => $token

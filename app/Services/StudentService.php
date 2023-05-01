@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Course;
 use App\Models\Student;
 use App\Services\Contracts\IStudentService;
 use Illuminate\Support\Facades\DB;
@@ -21,17 +20,17 @@ class StudentService implements IStudentService
 
     public function getById($id)
     {
-        return Course::findOrFail($id);
+        return Student::findOrFail($id);
     }
 
     public function create(array $attributes)
     {
-        return Course::create($attributes);
+        return Student::create($attributes);
     }
 
     public function update($id, array $attributes)
     {
-        return Course::find($id)->update($attributes);
+        return Student::findOrFail($id)->update($attributes);
     }
 
     public function delete($id)
