@@ -6,22 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Models\Course;
+use App\Services\CourseService;
 use App\Traits\ApiResponser;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
     use ApiResponser;
+
+    public function __construct(protected CourseService $courseService)
+    {
+    }
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $courses = Course::all();
-        return $this->successResponse($courses);
+        return $this->successResponse($this->courseService->getAll());
     }
 
     /**
@@ -32,16 +33,16 @@ class CourseController extends Controller
         $request->merge([
             'time' => json_encode($request->time)
         ]);
-        $course = Course::query()->create($request->all());
+        $course = $this->courseService->create($request->all());
         return $this->successResponse($course, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Course $course)
+    public function show($course)
     {
-        return $this->successResponse($course);
+        return $this->successResponse($this->courseService->getById($course));
     }
 
     /**
@@ -67,20 +68,15 @@ class CourseController extends Controller
         if ($course->isClean()) {
             return $this->errorResponse('Coloque por lo menos un valor diferente', 422);
         }
-        $course->save();
+        $course = $this->courseService->save($course);
         return $this->successResponse($course);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Course $course)
+    public function destroy($id)
     {
-        $course = DB::transaction(function () use ($course) {
-            $course->students()->detach();
-            $course->delete();
-            return $course;
-        });
-        return $this->successResponse($course);
+        return $this->successResponse($this->courseService->delete($id));
     }
 }
