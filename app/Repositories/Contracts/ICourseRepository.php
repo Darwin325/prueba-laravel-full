@@ -15,7 +15,7 @@ interface ICourseRepository
 
     public function update(int $id, array $attributes): ?Course;
 
-    public function delete(int $id): ?Course;
+    public function delete(Course $course): ?Course;
 
     public function save(?Course $course): ?Course;
 }

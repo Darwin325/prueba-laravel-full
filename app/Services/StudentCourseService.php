@@ -19,7 +19,7 @@ class StudentCourseService implements IStudentCourseService
     {
         $student = Student::findOrFail($id);
         $request->validate(['course_id' => 'required|numeric|min:1|exists:courses,id']);
-        $request->merge(['student_id' => $student->id]);
+        $request->merge(['user_id' => $student->id]);
         $idCourses = $student->courses()->pluck('course_id')->toArray();
         $idCourses[] = $request->course_id;
         $student->courses()->sync($idCourses);
@@ -36,7 +36,7 @@ class StudentCourseService implements IStudentCourseService
         return Course::query()
             ->select('courses.*')
             ->selectRaw(
-                "(select count(*) from course_student where courses.id = course_student.course_id and created_at > '$old')
+                "(select count(*) from course_user where courses.id = course_user.course_id and created_at > '$old')
                     as students_count"
             )
             ->orderBy('students_count', 'desc')

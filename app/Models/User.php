@@ -53,6 +53,12 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, "course_user", "user_id")
+            ->withTimestamps();
+    }
+
     public function isAdmin()
     {
         return $this->role_id === Role::ADMIN;

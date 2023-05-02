@@ -32,9 +32,9 @@ class CourseService
         return $this->courseRepository->update($id, $attributes);
     }
 
-    public function delete(int $id)
+    public function delete(Course $course): ?Course
     {
-        return $this->courseRepository->delete($id);
+        return $this->courseRepository->delete($course);
     }
 
     public function save(?Course $course): ?Course

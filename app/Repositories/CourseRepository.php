@@ -35,10 +35,9 @@ class CourseRepository implements ICourseRepository
         return $course;
     }
 
-    public function delete(int $id): ?Course
+    public function delete(Course $course): ?Course
     {
-        return DB::transaction(function () use ($id) {
-            $course = $this->course->findOrFail($id);
+        return DB::transaction(function () use ($course) {
             $course->students()->detach();
             $course->delete();
             return $course;

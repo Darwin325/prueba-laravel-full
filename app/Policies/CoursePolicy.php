@@ -4,16 +4,20 @@ namespace App\Policies;
 
 use App\Models\Course;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CoursePolicy
 {
+    public function before(User $user): ?bool
+    {
+        return $user->isAdmin() ? true : null;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +25,7 @@ class CoursePolicy
      */
     public function view(User $user, Course $course): bool
     {
-        //
+        return $user->courses()->where('course_id', $course->id)->exists();
     }
 
     /**
@@ -29,7 +33,7 @@ class CoursePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -37,7 +41,7 @@ class CoursePolicy
      */
     public function update(User $user, Course $course): bool
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
@@ -45,7 +49,7 @@ class CoursePolicy
      */
     public function delete(User $user, Course $course): bool
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
